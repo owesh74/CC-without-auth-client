@@ -4,12 +4,15 @@ import { useAuth } from '../AuthContext';
 
 const Admin = () => {
     const { isAdmin, isLoggedIn, isLoading } = useAuth();
-    const [allBookings, setAllBookings] = useState([]); // Stores all fetched bookings
+    const [allBookings, setAllBookings] = useState([]);
     const [services, setServices] = useState([]);
     const [activeTab, setActiveTab] = useState('bookings');
     const [newService, setNewService] = useState({ name: '', description: '', price: '', duration: '' });
     const [message, setMessage] = useState('');
-    const [statusFilter, setStatusFilter] = useState('All'); // NEW: State for filtering
+    const [statusFilter, setStatusFilter] = useState('All');
+
+    // Define the base API URL from the environment variable
+    const API_BASE_URL = process.env.REACT_APP_API_URL;
 
     useEffect(() => {
         if (!isLoading && isAdmin) {
@@ -21,10 +24,11 @@ const Admin = () => {
     const fetchBookings = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:5000/admin/bookings', {
+            // Use API_BASE_URL
+            const response = await axios.get(`${API_BASE_URL}/admin/bookings`, {
                 headers: { 'x-auth-token': token }
             });
-            setAllBookings(response.data); // Store all bookings
+            setAllBookings(response.data);
         } catch (error) {
             setMessage(error.response?.data?.message || 'Failed to fetch bookings.');
         }
@@ -33,7 +37,8 @@ const Admin = () => {
     const fetchServices = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:5000/admin/services', {
+            // Use API_BASE_URL
+            const response = await axios.get(`${API_BASE_URL}/admin/services`, {
                 headers: { 'x-auth-token': token }
             });
             setServices(response.data);
@@ -51,7 +56,8 @@ const Admin = () => {
         setMessage('');
         try {
             const token = localStorage.getItem('token');
-            await axios.post('http://localhost:5000/admin/services', newService, {
+            // Use API_BASE_URL
+            await axios.post(`${API_BASE_URL}/admin/services`, newService, {
                 headers: { 'x-auth-token': token }
             });
             setMessage('Service added successfully!');
@@ -66,7 +72,8 @@ const Admin = () => {
         setMessage('');
         try {
             const token = localStorage.getItem('token');
-            await axios.delete(`http://localhost:5000/admin/services/${serviceId}`, {
+            // Use API_BASE_URL
+            await axios.delete(`${API_BASE_URL}/admin/services/${serviceId}`, {
                 headers: { 'x-auth-token': token }
             });
             setMessage('Service deleted successfully!');
@@ -80,11 +87,12 @@ const Admin = () => {
         setMessage('');
         try {
             const token = localStorage.getItem('token');
-            await axios.put(`http://localhost:5000/admin/bookings/${bookingId}/status`, { status: newStatus }, {
+            // Use API_BASE_URL
+            await axios.put(`${API_BASE_URL}/admin/bookings/${bookingId}/status`, { status: newStatus }, {
                 headers: { 'x-auth-token': token }
             });
             setMessage('Booking status updated successfully!');
-            fetchBookings(); // Re-fetch to update the list
+            fetchBookings();
         } catch (error) {
             setMessage(error.response?.data?.message || 'Failed to update booking status.');
         }
@@ -97,158 +105,357 @@ const Admin = () => {
         setMessage('');
         try {
             const token = localStorage.getItem('token');
-            await axios.delete(`http://localhost:5000/admin/bookings/${bookingId}`, {
+            // Use API_BASE_URL
+            await axios.delete(`${API_BASE_URL}/admin/bookings/${bookingId}`, {
                 headers: { 'x-auth-token': token }
             });
             setMessage('Booking deleted successfully!');
-            fetchBookings(); // Re-fetch to update the list
+            fetchBookings();
         } catch (error) {
             setMessage(error.response?.data?.message || 'Failed to delete booking.');
         }
     };
     
-    // NEW: Filtered bookings list derived from allBookings
     const filteredBookings = allBookings.filter(booking => 
         statusFilter === 'All' || booking.status === statusFilter
     );
 
-
-    if (isLoading) return <div className="text-center text-xl text-gray-600">Loading...</div>;
-    if (!isLoggedIn || !isAdmin) return <div className="text-center text-xl text-red-600">Access Denied.</div>;
+    if (isLoading) return (
+        <div className="min-h-screen flex items-center justify-center" style={{background: 'linear-gradient(135deg, #0a0b1e 0%, #1a1b3e 100%)'}}>
+            <div className="text-center">
+                <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4" style={{borderColor: '#ff006e'}}></div>
+                <p className="mt-4 text-xl text-gray-300">Loading...</p>
+            </div>
+        </div>
+    );
+    
+    if (!isLoggedIn || !isAdmin) return (
+        <div className="min-h-screen flex items-center justify-center" style={{background: 'linear-gradient(135deg, #0a0b1e 0%, #1a1b3e 100%)'}}>
+            <div className="text-center p-8 rounded-2xl" style={{background: 'rgba(255, 0, 110, 0.1)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255, 0, 110, 0.3)'}}>
+                <svg className="w-20 h-20 mx-auto mb-4" style={{color: '#ff006e'}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+                <h2 className="text-2xl font-bold text-white">Access Denied</h2>
+                <p className="mt-2 text-gray-400">You need admin privileges to access this page.</p>
+            </div>
+        </div>
+    );
 
     return (
-        <div className="py-8">
-            <h1 className="text-4xl font-bold text-gray-800 mb-6">Admin Dashboard</h1>
-            <div className="mb-4 border-b border-gray-200">
-                <nav className="flex space-x-4">
-                    <button
-                        className={`py-2 px-4 font-semibold ${activeTab === 'bookings' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600 hover:text-gray-900'}`}
-                        onClick={() => setActiveTab('bookings')}
-                    >
-                        Manage Bookings
-                    </button>
-                    <button
-                        className={`py-2 px-4 font-semibold ${activeTab === 'services' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600 hover:text-gray-900'}`}
-                        onClick={() => setActiveTab('services')}
-                    >
-                        Manage Services
-                    </button>
-                </nav>
-            </div>
+        <div className="min-h-screen relative overflow-hidden" style={{background: 'linear-gradient(135deg, #0a0b1e 0%, #1a1b3e 100%)'}}>
+        
+    
+            <div className="relative z-10 max-w-7xl mx-auto px-4 py-8">
+                {/* Header */}
+                <div className="mb-8 text-center">
+                    <h1 className="text-5xl font-bold mb-2" style={{background: 'linear-gradient(135deg, #ff006e 0%, #8b5cf6 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
+                        Admin Dashboard
+                    </h1>
+                    <p className="text-gray-400">Manage your services and bookings</p>
+                </div>
 
-            {message && <p className="text-center mb-4 text-green-600">{message}</p>}
-
-            {activeTab === 'bookings' && (
-                <div>
-                    <h2 className="text-2xl font-semibold text-gray-700 mb-4">All Bookings</h2>
-                    
-                    {/* NEW: Status Filter Dropdown */}
-                    <div className="mb-6 flex items-center space-x-3">
-                        <label className="font-medium text-gray-700">Filter by Status:</label>
-                        <select
-                            className="border border-gray-300 rounded-lg p-2"
-                            value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
+                {/* Tab Navigation */}
+                <div className="mb-8 p-2 rounded-2xl" style={{background: 'rgba(255, 255, 255, 0.05)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255, 255, 255, 0.1)'}}>
+                    <nav className="flex space-x-2">
+                        <button
+                            className={`flex-1 py-3 px-6 font-semibold rounded-xl transition-all duration-300 ${
+                                activeTab === 'bookings' 
+                                    ? 'text-white shadow-lg' 
+                                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                            }`}
+                            style={activeTab === 'bookings' ? {background: 'linear-gradient(135deg, #ff006e 0%, #8b5cf6 100%)'} : {}}
+                            onClick={() => setActiveTab('bookings')}
                         >
-                            <option value="All">All</option>
-                            <option value="Pending">Pending</option>
-                            <option value="Assigned">Assigned</option>
-                            <option value="Completed">Completed</option>
-                        </select>
-                    </div>
-                    {/* END NEW FILTER */}
-
-                    {filteredBookings.length === 0 ? (
-                        <p className="text-gray-500">No {statusFilter !== 'All' && statusFilter} bookings found.</p>
-                    ) : (
-                        <div className="space-y-4">
-                            {filteredBookings.map((booking) => (
-                                <div key={booking._id} className="bg-white p-6 rounded-lg shadow-md">
-                                    <h3 className="text-xl font-bold text-gray-800">Service: {booking.serviceId?.name || 'N/A'}</h3>
-                                    
-                                    {/* FIX: Show Customer Name and remove redundant email/user fields */}
-                                    <p className="text-gray-600">Customer Name: <span className="font-semibold">{booking.customerName || 'N/A'}</span></p> 
-                                    <p className="text-gray-600">Contact Number: {booking.contactNumber}</p>
-                                    
-                                    <p className="text-gray-600">Date: {new Date(booking.date).toLocaleDateString()}</p>
-                                    <p className="text-gray-600">Address: {booking.address}</p>
-                                    
-                                    <div className="mt-4 flex items-center justify-between">
-                                        <div className="flex items-center space-x-2">
-                                            <label className="text-gray-700 font-semibold">Status:</label>
-                                            <select
-                                                className="border border-gray-300 rounded-lg p-2"
-                                                value={booking.status}
-                                                onChange={(e) => handleUpdateStatus(booking._id, e.target.value)}
-                                            >
-                                                <option value="Pending">Pending</option>
-                                                <option value="Assigned">Assigned</option>
-                                                <option value="Completed">Completed</option>
-                                            </select>
-                                        </div>
-                                        <button
-                                            onClick={() => handleDeleteBooking(booking._id)}
-                                            className="px-4 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
-                                        >
-                                            Delete
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            )}
-
-            {activeTab === 'services' && (
-                <div>
-                    <h2 className="text-2xl font-semibold text-gray-700 mb-4">Add New Service</h2>
-                    <form onSubmit={handleAddService} className="bg-white p-6 rounded-lg shadow-md space-y-4">
-                        <div>
-                            <label className="block text-gray-700">Service Name</label>
-                            <input type="text" name="name" value={newService.name} onChange={handleServiceChange} className="w-full px-4 py-2 mt-2 border rounded-lg" required />
-                        </div>
-                        <div>
-                            <label className="block text-gray-700">Description</label>
-                            <textarea name="description" value={newService.description} onChange={handleServiceChange} className="w-full px-4 py-2 mt-2 border rounded-lg" required></textarea>
-                        </div>
-                        <div>
-                            <label className="block text-gray-700">Price</label>
-                            <input type="number" name="price" value={newService.price} onChange={handleServiceChange} className="w-full px-4 py-2 mt-2 border rounded-lg" required />
-                        </div>
-                        <div>
-                            <label className="block text-gray-700">Duration (minutes)</label>
-                            <input type="number" name="duration" value={newService.duration} onChange={handleServiceChange} className="w-full px-4 py-2 mt-2 border rounded-lg" required />
-                        </div>
-                        <button type="submit" className="w-full px-4 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors">
-                            Add Service
+                            📋 Manage Bookings
                         </button>
-                    </form>
-
-                    <h2 className="text-2xl font-semibold text-gray-700 mt-8 mb-4">Existing Services</h2>
-                    {services.length === 0 ? (
-                        <p className="text-gray-500">No services found.</p>
-                    ) : (
-                        <div className="space-y-4">
-                            {services.map((service) => (
-                                <div key={service._id} className="bg-white p-6 rounded-lg shadow-md flex justify-between items-center">
-                                    <div>
-                                        <h3 className="text-xl font-bold text-gray-800">{service.name}</h3>
-                                        <p className="text-gray-600">{service.description}</p>
-                                        <p className="text-gray-600">Price: ₹{service.price} - Duration: {service.duration} mins</p>
-                                    </div>
-                                    <button
-                                        onClick={() => handleDeleteService(service._id)}
-                                        className="px-4 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
-                                    >
-                                        Delete
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                    )}
+                        <button
+                            className={`flex-1 py-3 px-6 font-semibold rounded-xl transition-all duration-300 ${
+                                activeTab === 'services' 
+                                    ? 'text-white shadow-lg' 
+                                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                            }`}
+                            style={activeTab === 'services' ? {background: 'linear-gradient(135deg, #ff006e 0%, #8b5cf6 100%)'} : {}}
+                            onClick={() => setActiveTab('services')}
+                        >
+                            ⚙️ Manage Services
+                        </button>
+                    </nav>
                 </div>
-            )}
+
+                {/* Message Display */}
+                {message && (
+                    <div className="mb-6 p-4 rounded-xl text-center font-medium animate-fade-in" style={{
+                        background: message.includes('success') ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                        border: `1px solid ${message.includes('success') ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
+                        color: message.includes('success') ? '#10b981' : '#ef4444'
+                    }}>
+                        {message}
+                    </div>
+                )}
+
+                {/* Bookings Tab */}
+                {activeTab === 'bookings' && (
+                    <div>
+                        <div className="mb-6 p-6 rounded-2xl" style={{background: 'rgba(255, 255, 255, 0.05)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255, 255, 255, 0.1)'}}>
+                            <div className="flex items-center justify-between flex-wrap gap-4">
+                                <h2 className="text-2xl font-bold text-white">All Bookings</h2>
+                                <div className="flex items-center space-x-3">
+                                    <label className="font-medium text-gray-300">Filter:</label>
+                                    <select
+                                        className="px-4 py-2 rounded-lg font-medium transition-all duration-300 focus:outline-none focus:ring-2"
+                                        style={{
+                                            background: 'rgba(255, 255, 255, 0.1)',
+                                            border: '1px solid rgba(255, 255, 255, 0.2)',
+                                            color: 'white',
+                                            focusRingColor: '#ff006e'
+                                        }}
+                                        value={statusFilter}
+                                        onChange={(e) => setStatusFilter(e.target.value)}
+                                    >
+                                        <option value="All" style={{background: '#1a1b3e'}}>All</option>
+                                        <option value="Pending" style={{background: '#1a1b3e'}}>Pending</option>
+                                        <option value="Assigned" style={{background: '#1a1b3e'}}>Assigned</option>
+                                        <option value="Completed" style={{background: '#1a1b3e'}}>Completed</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        {filteredBookings.length === 0 ? (
+                            <div className="text-center p-12 rounded-2xl" style={{background: 'rgba(255, 255, 255, 0.05)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255, 255, 255, 0.1)'}}>
+                                <p className="text-gray-400 text-lg">No {statusFilter !== 'All' && statusFilter} bookings found.</p>
+                            </div>
+                        ) : (
+                            <div className="grid gap-6">
+                                {filteredBookings.map((booking) => (
+                                    <div 
+                                        key={booking._id} 
+                                        className="p-6 rounded-2xl transition-all duration-300 hover:scale-[1.02] hover:border-[#ff006e]/30"
+                                        style={{
+                                            background: 'rgba(255, 255, 255, 0.05)',
+                                            backdropFilter: 'blur(10px)',
+                                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                                            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
+                                        }}
+                                    >
+                                        <div className="flex items-start justify-between mb-4">
+                                            <h3 className="text-2xl font-bold text-white">{booking.serviceId?.name || 'N/A'}</h3>
+                                            <span 
+                                                className="px-3 py-1 rounded-full text-xs font-bold"
+                                                style={{
+                                                    background: booking.status === 'Completed' ? 'rgba(16, 185, 129, 0.2)' : 
+                                                                booking.status === 'Assigned' ? 'rgba(59, 130, 246, 0.2)' : 
+                                                                'rgba(251, 191, 36, 0.2)',
+                                                    color: booking.status === 'Completed' ? '#10b981' : 
+                                                           booking.status === 'Assigned' ? '#3b82f6' : 
+                                                           '#fbbf24'
+                                                }}
+                                            >
+                                                {booking.status}
+                                            </span>
+                                        </div>
+                                        
+                                        <div className="grid md:grid-cols-2 gap-4 mb-4">
+                                            <div>
+                                                <p className="text-gray-400 text-sm">Customer Name</p>
+                                                <p className="text-white font-semibold">{booking.customerName || 'N/A'}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-gray-400 text-sm">Contact Number</p>
+                                                <p className="text-white font-semibold">{booking.contactNumber}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-gray-400 text-sm">Date</p>
+                                                <p className="text-white font-semibold">{new Date(booking.date).toLocaleDateString()}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-gray-400 text-sm">Address</p>
+                                                <p className="text-white font-semibold">{booking.address}</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="flex items-center justify-between flex-wrap gap-4 mt-6 pt-4" style={{borderTop: '1px solid rgba(255, 255, 255, 0.1)'}}>
+                                            <div className="flex items-center space-x-3">
+                                                <label className="text-gray-300 font-semibold">Status:</label>
+                                                <select
+                                                    className="px-4 py-2 rounded-lg font-medium transition-all duration-300 focus:outline-none focus:ring-2"
+                                                    style={{
+                                                        background: 'rgba(255, 255, 255, 0.1)',
+                                                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                                                        color: 'white'
+                                                    }}
+                                                    value={booking.status}
+                                                    onChange={(e) => handleUpdateStatus(booking._id, e.target.value)}
+                                                >
+                                                    <option value="Pending" style={{background: '#1a1b3e'}}>Pending</option>
+                                                    <option value="Assigned" style={{background: '#1a1b3e'}}>Assigned</option>
+                                                    <option value="Completed" style={{background: '#1a1b3e'}}>Completed</option>
+                                                </select>
+                                            </div>
+                                            <button
+                                                onClick={() => handleDeleteBooking(booking._id)}
+                                                className="px-6 py-2 text-white font-semibold rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                                                style={{background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'}}
+                                            >
+                                                🗑️ Delete
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* Services Tab */}
+                {activeTab === 'services' && (
+                    <div>
+                        {/* Add Service Form */}
+                        <div className="mb-8 p-8 rounded-2xl" style={{background: 'rgba(255, 255, 255, 0.05)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255, 255, 255, 0.1)'}}>
+                            <div className="flex items-center mb-6">
+                                <div className="w-12 h-12 rounded-full flex items-center justify-center text-2xl mr-4" style={{background: 'linear-gradient(135deg, #ff006e 0%, #8b5cf6 100%)'}}>
+                                    ➕
+                                </div>
+                                <h2 className="text-2xl font-bold text-white">Add New Service</h2>
+                            </div>
+                            <form onSubmit={handleAddService} className="space-y-4">
+                                <div>
+                                    <label className="block text-gray-300 mb-2 font-medium">Service Name</label>
+                                    <input 
+                                        type="text" 
+                                        name="name" 
+                                        value={newService.name} 
+                                        onChange={handleServiceChange}
+                                        placeholder="e.g., AC Installation"
+                                        className="w-full px-4 py-3 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2"
+                                        style={{
+                                            background: 'rgba(255, 255, 255, 0.1)',
+                                            border: '1px solid rgba(255, 255, 255, 0.2)',
+                                            color: 'white',
+                                            focusRingColor: '#ff006e'
+                                        }}
+                                        required 
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-gray-300 mb-2 font-medium">Description</label>
+                                    <textarea 
+                                        name="description" 
+                                        value={newService.description} 
+                                        onChange={handleServiceChange}
+                                        placeholder="Describe the service..."
+                                        rows="3"
+                                        className="w-full px-4 py-3 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2"
+                                        style={{
+                                            background: 'rgba(255, 255, 255, 0.1)',
+                                            border: '1px solid rgba(255, 255, 255, 0.2)',
+                                            color: 'white',
+                                            focusRingColor: '#ff006e'
+                                        }}
+                                        required
+                                    ></textarea>
+                                </div>
+                                <div className="grid md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-gray-300 mb-2 font-medium">Price (₹)</label>
+                                        <input 
+                                            type="number" 
+                                            name="price" 
+                                            value={newService.price} 
+                                            onChange={handleServiceChange}
+                                            placeholder="500"
+                                            className="w-full px-4 py-3 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2"
+                                            style={{
+                                                background: 'rgba(255, 255, 255, 0.1)',
+                                                border: '1px solid rgba(255, 255, 255, 0.2)',
+                                                color: 'white',
+                                                focusRingColor: '#ff006e'
+                                            }}
+                                            required 
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-gray-300 mb-2 font-medium">Duration (minutes)</label>
+                                        <input 
+                                            type="number" 
+                                            name="duration" 
+                                            value={newService.duration} 
+                                            onChange={handleServiceChange}
+                                            placeholder="60"
+                                            className="w-full px-4 py-3 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2"
+                                            style={{
+                                                background: 'rgba(255, 255, 255, 0.1)',
+                                                border: '1px solid rgba(255, 255, 255, 0.2)',
+                                                color: 'white',
+                                                focusRingColor: '#ff006e'
+                                            }}
+                                            required 
+                                        />
+                                    </div>
+                                </div>
+                                <button 
+                                    type="submit" 
+                                    className="w-full py-3 text-white font-bold rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                                    style={{background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)'}}
+                                >
+                                    ✨ Add Service
+                                </button>
+                            </form>
+                        </div>
+
+                        {/* Existing Services */}
+                        <div className="mb-6 p-6 rounded-2xl" style={{background: 'rgba(255, 255, 255, 0.05)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255, 255, 255, 0.1)'}}>
+                            <h2 className="text-2xl font-bold text-white">Existing Services</h2>
+                        </div>
+
+                        {services.length === 0 ? (
+                            <div className="text-center p-12 rounded-2xl" style={{background: 'rgba(255, 255, 255, 0.05)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255, 255, 255, 0.1)'}}>
+                                <p className="text-gray-400 text-lg">No services found.</p>
+                            </div>
+                        ) : (
+                            <div className="grid md:grid-cols-2 gap-6">
+                                {services.map((service) => (
+                                    <div 
+                                        key={service._id} 
+                                        className="p-6 rounded-2xl transition-all duration-300 hover:scale-[1.02] group"
+                                        style={{
+                                            background: 'rgba(255, 255, 255, 0.05)',
+                                            backdropFilter: 'blur(10px)',
+                                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                                            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
+                                        }}
+                                    >
+                                        <div className="flex items-start justify-between mb-4">
+                                            <div className="w-12 h-12 rounded-full flex items-center justify-center text-2xl transition-all duration-300 group-hover:scale-110" style={{background: 'linear-gradient(135deg, #ff006e 0%, #8b5cf6 100%)'}}>
+                                                ⚙️
+                                            </div>
+                                            <button
+                                                onClick={() => handleDeleteService(service._id)}
+                                                className="px-4 py-2 text-white font-semibold rounded-lg transition-all duration-300 hover:scale-105"
+                                                style={{background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'}}
+                                            >
+                                                🗑️
+                                            </button>
+                                        </div>
+                                        <h3 className="text-xl font-bold text-white mb-2">{service.name}</h3>
+                                        <p className="text-gray-400 mb-4">{service.description}</p>
+                                        <div className="flex items-center justify-between pt-4" style={{borderTop: '1px solid rgba(255, 255, 255, 0.1)'}}>
+                                            <div>
+                                                <p className="text-gray-400 text-sm">Price</p>
+                                                <p className="text-white font-bold text-xl">₹{service.price}</p>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="text-gray-400 text-sm">Duration</p>
+                                                <p className="text-white font-bold">{service.duration} mins</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

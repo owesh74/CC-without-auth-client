@@ -7,58 +7,97 @@ const AdminLogin = () => {
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
     const navigate = useNavigate();
-    const { login } = useAuth(); 
-
-    // New Endpoint for Password-Only Login
+    const { login } = useAuth();
+    
     const API_URL = process.env.REACT_APP_API_URL + "/auth/admin-pass-login";
 
     const handleSubmit = async (e) => {
-        e.preventDefault(); 
+        e.preventDefault();
         setMessage('');
-
+        
         try {
             const response = await axios.post(API_URL, { password });
-            
-            // 1. Manually set the token in local storage
             localStorage.setItem('token', response.data.token);
-
-            // *** IMPORTANT FIX: Store the admin's email for AuthContext to use ***
             localStorage.setItem('userEmail', response.data.user.email);
-            
             setMessage('Login successful!');
-
-            // 2. Force a full page reload and redirect to the protected admin route.
-            window.location.href = '/admin'; // Triggers AuthContext check
-            
+            window.location.href = '/admin';
         } catch (error) {
             const errorMessage = error.response?.data?.msg || 'Invalid Password. Please check.';
             setMessage(errorMessage);
-            setPassword(''); 
+            setPassword('');
         }
     };
 
     return (
-        <div className="py-8 min-h-screen flex items-center justify-center bg-gray-100">
-            <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-xl">
-                <h1 className="text-4xl font-bold text-center text-gray-800 mb-6">Admin Login</h1>
-                <p className="text-center text-gray-600 mb-6">Enter the Admin Password to continue.</p>
-                
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    <div>
-                        <label className="block text-gray-700">Password</label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-                            required
-                        />
-                    </div>
-                    <button type="submit" className="w-full px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
-                        Login
-                    </button>
-                </form>
-                {message && <p className={`mt-4 text-center ${message.includes('successful') ? 'text-green-600' : 'text-red-600'}`}>{message}</p>}
+        <div className="min-h-screen flex items-center justify-center" style={{background: 'linear-gradient(135deg, #0a0b1e 0%, #1a1b3e 100%)'}}>
+            <div className="w-full max-w-md mx-4">
+                <div 
+                    className="p-8 rounded-2xl"
+                    style={{
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        backdropFilter: 'blur(20px)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5)'
+                    }}
+                >
+              
+
+                    <h1 
+                        className="text-4xl font-bold text-center mb-2"
+                        style={{
+                            background: 'linear-gradient(135deg, #ff006e 0%, #8b5cf6 100%)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent'
+                        }}
+                    >
+                        Admin Login
+                    </h1>
+                    <p className="text-center text-gray-400 mb-8">Enter the Admin Password to continue.</p>
+                    
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        <div>
+                            <label className="block text-gray-300 mb-2 font-medium">Password</label>
+                            <input
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="Enter admin password"
+                                className="w-full px-4 py-3 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2"
+                                style={{
+                                    background: 'rgba(255, 255, 255, 0.1)',
+                                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                                    color: 'white'
+                                }}
+                                required
+                            />
+                        </div>
+                        
+                        <button 
+                            type="submit" 
+                            className="w-full py-3 text-white font-bold rounded-lg transition-all duration-300 hover:scale-105"
+                            style={{background: 'linear-gradient(135deg, #ff006e 0%, #8b5cf6 100%)'}}
+                        >
+                            Login
+                        </button>
+                    </form>
+                    
+                    {message && (
+                        <div 
+                            className="mt-6 p-4 rounded-lg text-center font-medium"
+                            style={{
+                                background: message.includes('successful') 
+                                    ? 'rgba(16, 185, 129, 0.1)' 
+                                    : 'rgba(239, 68, 68, 0.1)',
+                                border: `1px solid ${message.includes('successful') 
+                                    ? 'rgba(16, 185, 129, 0.3)' 
+                                    : 'rgba(239, 68, 68, 0.3)'}`,
+                                color: message.includes('successful') ? '#10b981' : '#ef4444'
+                            }}
+                        >
+                            {message}
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

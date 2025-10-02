@@ -1,13 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-body, html {
-  margin: 0;
-  padding: 0;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-}
-
-#root {
-  margin: 0;
-  padding: 0;
+/* FIX: CSS Reset to remove default browser margin */
+body, html, #root {
+    margin: 0;
+    padding: 0;
 }
