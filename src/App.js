@@ -70,16 +70,24 @@ const Navbar = () => {
             <div className="container mx-auto px-4 relative z-10">
                 <div className="flex items-center justify-between py-4">
                     {/* Logo/Brand */}
-              <Link 
-  to="/" 
+       <Link
+  to="/"
   className="flex flex-col items-start relative z-10"
   onClick={() => setIsOpen(false)}
 >
-  <span className="text-2xl md:text-2xl font-bold bg-gradient-to-r from-[#f5549a] to-[#ff006e] bg-clip-text text-transparent hover:scale-105 transition-all duration-300 drop-shadow-lg" >
+  <span 
+    className="text-2xl md:text-2xl font-bold hover:scale-105 transition-all duration-300 drop-shadow-lg"
+    style={{
+      backgroundImage: 'linear-gradient(135deg, #ff006e 0%, #d946ef 100%)',
+      backgroundClip: 'text',
+      WebkitBackgroundClip: 'text',
+      color: 'transparent'
+    }}
+  >
     CoolCare
   </span>
   <span className="text-xs md:text-xs text-gray-300 -mt-1">
-        Ac Services In Chindwara
+    Ac Services In Chindwara
   </span>
 </Link>
                     {/* Mobile Menu Button (Hamburger) */}
