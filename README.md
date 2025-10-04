@@ -57,10 +57,8 @@ This project is split into two repositories for clean separation of concerns:
    Create a `.env` file in the root directory:
    ```env
    MONGO_URI=your_mongodb_connection_string
-   JWT_SECRET=your_jwt_secret_key
    
    # Admin credentials
-   ADMIN_EMAIL=admin@example.com
    ADMIN_PASS=your_secure_password
    ```
 
