@@ -1,51 +1,50 @@
-# 🛠️ CoolCare: AC Service Booking Platform (Direct Booking Version)
+# 🛠️ CoolCare: AC Service Booking Platform
 
 **Live Demo:** https://my-coolcare.vercel.app/
 
-This version of the CoolCare application is highly simplified, removing all complex user authentication (OTP/Signup) and mailing systems. It is optimized for direct public service booking and centralized Admin management.
+CoolCare is a streamlined AC service booking platform designed for direct public bookings with centralized admin management. No complex authentication required—just simple, efficient service scheduling.
 
 ---
 
-## 🚀 Key Features
+## ✨ Features
 
-### Public Booking
-- **Direct Booking:** Users can book a service instantly by providing just their name, contact details, date, and address.
-- **Real-time Slot Check:** The form checks the availability of time slots (10:00 - 19:00) against existing bookings.
-- **Simple Admin Access:** Secure, password-only login for management.
-- **Mobile Optimized:** Responsive navigation with a hidden Admin entry point.
+### 🌐 Public Booking Interface
+- **Instant Booking** - Book services with just name, contact, date, and address
+- **Real-Time Availability** - Live slot checking for time slots between 10:00 AM - 7:00 PM
+- **Responsive Design** - Optimized for all devices with intuitive navigation
 
-### Admin Dashboard (Protected)
-- **Manage Bookings:** View customer name, contact number, address, and service details.
-- **Status Control:** Update booking status (Pending, Assigned, Completed).
-- **Service Management:** CRUD operations for services (Add, Delete).
-
----
-
-## 📁 Repository Structure
-
-This project is streamlined into two repositories:
-
-| Component | Repository Link | Description |
-|-----------|----------------|-------------|
-| **Client (Frontend)** | [owesh74/CC-without-auth-client](https://github.com/owesh74/CC-without-auth-client) | React application focusing on public booking and admin UI. |
-| **Server (Backend)** | [owesh74/CC-without-auth-ser](https://github.com/owesh74/CC-without-auth-ser) | Node.js backend handling API requests and database operations. |
-
-> **Note:** Verify the server repository link is correct for your intended backend repository.
+### 🔐 Admin Dashboard
+- **Booking Management** - View and manage all customer bookings in one place
+- **Status Tracking** - Update booking status (Pending → Assigned → Completed)
+- **Service Control** - Add and remove services with full CRUD operations
+- **Secure Access** - Password-protected admin portal
 
 ---
 
-## ⚙️ Setup and Installation
+## 📦 Project Architecture
+
+This project is split into two repositories for clean separation of concerns:
+
+| Component | Repository | Description |
+|-----------|------------|-------------|
+| **Frontend** | [CC-without-auth-client](https://github.com/owesh74/CC-without-auth-client) | React-based user interface for booking and admin management |
+| **Backend** | [CC-without-auth-ser](https://github.com/owesh74/CC-without-auth-ser) | Node.js API server with MongoDB integration |
+
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js (v18+)
-- MongoDB Atlas account (to get your `MONGO_URI`)
+- Node.js v18 or higher
+- MongoDB Atlas account
+- Git
 
-### Step 1: Configure the Backend (Server)
+### Backend Setup
 
-1. **Clone your server repository:**
+1. **Clone and navigate to the server repository:**
    ```bash
-   git clone [YOUR_SERVER_REPO_LINK] coolcare/server
-   cd coolcare/server
+   git clone https://github.com/owesh74/CC-without-auth-ser.git
+   cd CC-without-auth-ser
    ```
 
 2. **Install dependencies:**
@@ -53,31 +52,31 @@ This project is streamlined into two repositories:
    npm install
    ```
 
-3. **Create a `.env` file and paste your credentials:**
+3. **Configure environment variables:**
+   
+   Create a `.env` file in the root directory:
    ```env
-   MONGO_URI=your_mongodb_atlas_connection_string
-   JWT_SECRET=your_super_secret_key_for_jwt
-
-   # Admin Login Credentials (Used for password-only login)
-   ADMIN_EMAIL=your_admin_email@gmail.com 
-   ADMIN_PASS=your_admin_password
+   MONGO_URI=your_mongodb_connection_string
+   JWT_SECRET=your_jwt_secret_key
+   
+   # Admin credentials
+   ADMIN_EMAIL=admin@example.com
+   ADMIN_PASS=your_secure_password
    ```
-
-   > **Note:** The `EMAIL_USER` and `EMAIL_PASS` variables are kept, even though the OTP system is removed, as they are used to send new booking alerts to the admin.
 
 4. **Start the server:**
    ```bash
    node server.js
    ```
    
-   The server will confirm the Admin user and sample services are seeded.
+   The server will automatically seed the admin user and sample services.
 
-### Step 2: Configure the Frontend (Client)
+### Frontend Setup
 
-1. **Clone the client repository:**
+1. **Clone and navigate to the client repository:**
    ```bash
-   git clone https://github.com/owesh74/CC-without-auth-client.git coolcare/client
-   cd coolcare/client
+   git clone https://github.com/owesh74/CC-without-auth-client.git
+   cd CC-without-auth-client
    ```
 
 2. **Install dependencies:**
@@ -85,25 +84,81 @@ This project is streamlined into two repositories:
    npm install
    ```
 
-3. **Create a `.env.development` file and set the API URL:**
+3. **Configure environment variables:**
+   
+   Create a `.env.development` file:
    ```env
-   # Must be prefixed with REACT_APP_
    REACT_APP_API_URL=http://localhost:5000
    ```
 
-4. **Start the frontend application:**
+4. **Start the development server:**
    ```bash
    npm start
    ```
+   
+   The application will open at `http://localhost:3000`
 
 ---
 
-## 🔒 Admin Access (Password Only)
+## 🔑 Admin Access
 
-Access to the Admin Dashboard is protected by a password only, visible only by manually navigating to the route.
+The admin dashboard is password-protected and accessible through a dedicated route.
 
-| Feature | Details |
-|---------|---------|
-| **Login Page** | Manually navigate to `/admin-login` |
-| **Credential** | Use the `ADMIN_PASS` from your server's `.env` file |
-| **Dashboard** | After successful login, you are redirected to `/admin` |
+**Access Details:**
+- **Login URL:** `/admin-login`
+- **Credentials:** Use the `ADMIN_PASS` configured in your server `.env`
+- **Dashboard:** Redirects to `/admin` upon successful authentication
+
+---
+
+## 🛠️ Tech Stack
+
+**Frontend:**
+- React.js
+- React Router
+- Axios
+
+**Backend:**
+- Node.js
+- Express.js
+- MongoDB with Mongoose
+- JWT Authentication
+
+**Deployment:**
+- Vercel (Frontend)
+- Your preferred hosting (Backend)
+
+---
+
+## 📝 Environment Variables Reference
+
+### Backend (.env)
+```env
+MONGO_URI          # MongoDB connection string
+JWT_SECRET         # Secret key for JWT tokens
+ADMIN_EMAIL        # Admin email address
+ADMIN_PASS         # Admin password
+```
+
+### Frontend (.env.development)
+```env
+REACT_APP_API_URL  # Backend API URL
+```
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to open issues or submit pull requests.
+
+---
+
+## 📄 License
+
+This project is open source and available under the [MIT License](LICENSE).
+
+---
+
+## 📧 Support
+
+For questions or support, please open an issue in the respective repository.
