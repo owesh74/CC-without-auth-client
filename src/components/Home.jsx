@@ -30,7 +30,7 @@ const Home = () => {
                         Your Trusted Partner for<br />Complete AC Solutions
                     </h1>
                     <p className="mt-4 text-base sm:text-lg md:text-xl text-gray-400 font-normal max-w-3xl mx-auto leading-relaxed">
-                        From installation to emergency repairs, we deliver exceptional AC services with certified technicians, transparent pricing, and guaranteed satisfaction across Nagpur.
+                        From installation to emergency repairs, we deliver exceptional AC services with certified technicians, transparent pricing, and guaranteed satisfaction across Chindwara.
                     </p>
                     <div className="mt-10 flex flex-wrap justify-center gap-4">
                         <button 
