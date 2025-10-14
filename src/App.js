@@ -84,7 +84,7 @@ const Navbar = () => {
       color: 'transparent'
     }}
   >
-    CoolCare
+    AirCoolService
   </span>
   <span className="text-xs md:text-xs text-gray-300 -mt-1">
     Ac Services In Chindwara
