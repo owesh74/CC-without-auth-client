@@ -49,12 +49,12 @@ const Home = () => {
                 </div>
             </div>
 
-            {/* Why Choose CoolCare Section */}
+            {/* Why Choose AirCoolService Section */}
             <div className="mt-20 sm:mt-32 w-full px-4 relative z-10">
                 <div className="max-w-6xl mx-auto">
                     <div className="text-center mb-12">
                         <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-4">
-                            Why Choose CoolCare?
+                            Why Choose AirCoolService?
                         </h2>
                         <p className="text-gray-400 text-lg max-w-2xl mx-auto">
                             Experience the difference with our comprehensive AC service solutions
