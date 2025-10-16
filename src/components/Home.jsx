@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 const Home = () => {
     const [showFixedToaster, setShowFixedToaster] = useState(false);
-    const CONTACT_NUMBER = "7620437704"; 
+    const CONTACT_NUMBER = "9074747875"; 
 
     const handleCall = () => {
         window.location.href = `tel:${CONTACT_NUMBER}`;
