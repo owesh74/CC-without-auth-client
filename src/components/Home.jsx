@@ -24,13 +24,13 @@ const Home = () => {
             <div className="flex flex-col items-center justify-center text-center p-4 md:p-8 pt-12 md:pt-20 relative z-10">
                 <div className="max-w-6xl mx-auto">
                     <div className="inline-block px-4 py-2 bg-white/5 border border-white/10 rounded-full text-sm text-gray-400 mb-6 backdrop-blur-sm">
-                        Professional AC Services • Available 24/7
+                        Professional AC Services • Across Chhindwara
                     </div>
                     <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight mb-6 tracking-tight">
                         Your Trusted Partner for<br />Complete AC Solutions
                     </h1>
                     <p className="mt-4 text-base sm:text-lg md:text-xl text-gray-400 font-normal max-w-3xl mx-auto leading-relaxed">
-                        From installation to emergency repairs, we deliver exceptional AC services with certified technicians, transparent pricing, and guaranteed satisfaction across Chindwara.
+                        From installation to emergency repairs, we deliver exceptional AC services with certified technicians, transparent pricing, and guaranteed satisfaction across Chhindwara.
                     </p>
                     <div className="mt-10 flex flex-wrap justify-center gap-4">
                         <button 
@@ -96,7 +96,7 @@ const Home = () => {
                             <div className="absolute inset-0 bg-gradient-to-br from-[#ff006e]/0 to-[#ff006e]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                             <div className="relative z-10">
                                 <div className="text-[#ff006e] text-5xl font-bold mb-4">04</div>
-                                <h3 className="text-xl font-semibold text-white mb-3">90-Day Warranty</h3>
+                                <h3 className="text-xl font-semibold text-white mb-3">satisfaction guarantee</h3>
                                 <p className="text-sm text-gray-400 leading-relaxed">Every service backed by our comprehensive warranty and satisfaction guarantee</p>
                             </div>
                         </div>
@@ -179,7 +179,7 @@ const Home = () => {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                             </div>
-                            <h3 className="text-xl font-semibold text-white mb-2">24/7 Emergency Support</h3>
+                            <h3 className="text-xl font-semibold text-white mb-2">Emergency Support</h3>
                             <p className="text-gray-400 text-sm">Round-the-clock emergency services for urgent AC breakdowns and critical repairs</p>
                         </div>
                     </div>
@@ -241,7 +241,7 @@ const Home = () => {
                     </div>
                     <div className="p-4 sm:p-5">
                         <p className="text-gray-400 text-sm mb-4 leading-relaxed">
-                            Get instant support from our AC experts. We're available 24/7 for your service needs.
+                            Get instant support from our AC experts. Call now for quick help!.
                         </p>
                         <div className="flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-2 mt-2">
                             <span className="text-lg sm:text-xl text-white font-bold">{CONTACT_NUMBER}</span>

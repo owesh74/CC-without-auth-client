@@ -87,7 +87,7 @@ const Navbar = () => {
     AirCoolService
   </span>
   <span className="text-xs md:text-xs text-gray-300 -mt-1">
-    Ac Services In Chindwara
+    Ac Services In Chhindwara
   </span>
 </Link>
                     {/* Mobile Menu Button (Hamburger) */}
