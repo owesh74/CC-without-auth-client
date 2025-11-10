@@ -13,16 +13,22 @@ const Services = () => {
     const [availableSlots, setAvailableSlots] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
-    
+
     // Define the base API URL from the environment variable
     const API_BASE_URL = process.env.REACT_APP_API_URL;
-    
+
     // Create the Ref for scrolling to the form
-    const formRef = useRef(null); 
+    const formRef = useRef(null);
 
     const workingHours = [
         '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'
     ];
+    const [showDelayMsg, setShowDelayMsg] = useState(false);
+
+    useEffect(() => {
+        let timer = setTimeout(() => setShowDelayMsg(true), 5000);
+        return () => clearTimeout(timer);
+    }, []);
 
     useEffect(() => {
         const fetchServices = async () => {
@@ -67,7 +73,7 @@ const Services = () => {
         if (bookingData.date) {
             fetchAvailableSlots(service._id, bookingData.date);
         }
-        
+
         // SMOOTH SCROLL LOGIC
         if (formRef.current) {
             formRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -109,20 +115,20 @@ const Services = () => {
             setShowModal(true);
             return;
         }
-        
+
         try {
             const payload = {
                 ...bookingData,
                 serviceId: selectedService._id,
             };
-            
+
             // Use API_BASE_URL
             await axios.post(`${API_BASE_URL}/bookings`, payload);
 
             setMessage('Booking confirmed! You will get a call from our technician soon to confirm service details.');
             setIsSuccess(true);
             setShowModal(true);
-            
+
             setTimeout(() => {
                 setShowModal(false);
                 navigate('/');
@@ -136,7 +142,7 @@ const Services = () => {
             setShowModal(true);
         }
     };
-    
+
     const closeModal = () => {
         setShowModal(false);
         setMessage('');
@@ -189,7 +195,21 @@ const Services = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
                     {services.length === 0 ? (
-                        <p className="col-span-3 text-center text-gray-400">No services available at the moment.</p>
+                        <div className="col-span-3 flex flex-col justify-center items-center py-16 text-center space-y-4">
+                            <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+
+                            {showDelayMsg && (
+                                <div>
+                                    <p className="text-gray-500 font-medium">Loading services...</p>
+                                    <p className="text-lg text-gray-400 mt-1">
+                                        This may take up to{" "}
+                                        <span className="font-semibold text-emerald-500">2 minutes</span>.
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+
+
                     ) : (
                         services.map((service) => (
                             <div key={service._id} className={`group relative p-6 bg-gradient-to-br from-[#1a1a2e]/60 to-[#2d1b3d]/40 backdrop-blur-sm rounded-2xl border transition-all duration-500 flex flex-col justify-between ${selectedService?._id === service._id ? 'border-[#ff006e] shadow-lg shadow-[#ff006e]/20' : 'border-white/5 hover:border-white/10'}`}>
@@ -212,11 +232,11 @@ const Services = () => {
                                         <span className="text-sm text-gray-400">({service.duration} mins)</span>
                                     </div>
                                 </div>
-                                <button 
-                                    onClick={() => handleBookClick(service)} 
+                                <button
+                                    onClick={() => handleBookClick(service)}
                                     className={`relative z-10 w-full px-4 py-3 rounded-full transition-all duration-300 font-semibold ${selectedService?._id === service._id ? 'bg-[#ff006e] text-white shadow-lg shadow-[#ff006e]/30' : 'bg-[#6366f1] text-white hover:bg-[#7c3aed]'}`}
                                 >
-                                    {selectedService?._id === service._id ? 'Selected ✓' : 'Book Now'}
+                                    {selectedService?._id === service._id ? 'Selected ✓' : 'Double Click To Book Now'}
                                 </button>
                             </div>
                         ))
