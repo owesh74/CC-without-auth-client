@@ -69,28 +69,19 @@ const Admin = () => {
     };
 
     const handleDeleteService = async (serviceId) => {
-    setMessage('');
-
-    // Confirmation popup before deleting
-    const confirmDelete = window.confirm('Are you sure you want to delete this service?');
-    if (!confirmDelete) return; // Stop if user cancels
-
-    try {
-        const token = localStorage.getItem('token');
-        await axios.delete(`${API_BASE_URL}/admin/services/${serviceId}`, {
-            headers: { 'x-auth-token': token }
-        });
-
-        setMessage('Service deleted successfully!');
-        window.alert('Service deleted successfully!'); // Success popup
-        fetchServices(); // Refresh the list
-    } catch (error) {
-        const errMsg = error.response?.data?.message || 'Failed to delete service.';
-        setMessage(errMsg);
-        window.alert(errMsg); // Error popup
-    }
-};
-
+        setMessage('');
+        try {
+            const token = localStorage.getItem('token');
+            // Use API_BASE_URL
+            await axios.delete(`${API_BASE_URL}/admin/services/${serviceId}`, {
+                headers: { 'x-auth-token': token }
+            });
+            setMessage('Service deleted successfully!');
+            fetchServices();
+        } catch (error) {
+            setMessage(error.response?.data?.message || 'Failed to delete service.');
+        }
+    };
 
     const handleUpdateStatus = async (bookingId, newStatus) => {
         setMessage('');
@@ -406,7 +397,6 @@ const Admin = () => {
                                     type="submit" 
                                     className="w-full py-3 text-white font-bold rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg"
                                     style={{background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)'}}
-                                    onClick={() => window.alert('Service added! 🎉')}
                                 >
                                     ✨ Add Service
                                 </button>
