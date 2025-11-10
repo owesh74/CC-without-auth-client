@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect ,useCallback} from 'react';
 import axios from 'axios';
 import { useAuth } from '../AuthContext';
 
@@ -11,41 +11,43 @@ const Admin = () => {
     const [message, setMessage] = useState('');
     const [statusFilter, setStatusFilter] = useState('All');
 
-    // Define the base API URL from the environment variable
-    const API_BASE_URL = process.env.REACT_APP_API_URL;
+  
+ // ✅ Use your environment variable
+  const API_BASE_URL = process.env.REACT_APP_API_URL;
 
-    useEffect(() => {
-        if (!isLoading && isAdmin) {
-            fetchBookings();
-            fetchServices();
-        }
-    }, [isLoading, isAdmin]);
+  // ✅ Memoize these functions so ESLint and React Hooks are happy
+  const fetchBookings = useCallback(async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(`${API_BASE_URL}/admin/bookings`, {
+        headers: { "x-auth-token": token },
+      });
+      setAllBookings(response.data);
+    } catch (error) {
+      setMessage(error.response?.data?.message || "Failed to fetch bookings.");
+    }
+  }, [API_BASE_URL]); // include API_BASE_URL
 
-    const fetchBookings = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            // Use API_BASE_URL
-            const response = await axios.get(`${API_BASE_URL}/admin/bookings`, {
-                headers: { 'x-auth-token': token }
-            });
-            setAllBookings(response.data);
-        } catch (error) {
-            setMessage(error.response?.data?.message || 'Failed to fetch bookings.');
-        }
-    };
+  const fetchServices = useCallback(async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(`${API_BASE_URL}/admin/services`, {
+        headers: { "x-auth-token": token },
+      });
+      setServices(response.data);
+    } catch (error) {
+      setMessage(error.response?.data?.message || "Failed to fetch services.");
+    }
+  }, [API_BASE_URL]); // include API_BASE_URL
 
-    const fetchServices = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            // Use API_BASE_URL
-            const response = await axios.get(`${API_BASE_URL}/admin/services`, {
-                headers: { 'x-auth-token': token }
-            });
-            setServices(response.data);
-        } catch (error) {
-            setMessage(error.response?.data?.message || 'Failed to fetch services.');
-        }
-    };
+  // ✅ Call them when ready
+  useEffect(() => {
+    if (!isLoading && isAdmin) {
+      fetchBookings();
+      fetchServices();
+    }
+  }, [isLoading, isAdmin, fetchBookings, fetchServices]);
+
 
     const handleServiceChange = (e) => {
         setNewService({ ...newService, [e.target.name]: e.target.value });

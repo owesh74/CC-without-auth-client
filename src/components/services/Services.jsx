@@ -41,7 +41,7 @@ const Services = () => {
             }
         };
         fetchServices();
-    }, [])
+    }, [API_BASE_URL])
 
     const fetchAvailableSlots = async (serviceId, date) => {
         try {

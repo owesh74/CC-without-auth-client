@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import axios from 'axios';
-import { useAuth } from '../AuthContext';
+
 
 const AdminLogin = () => {
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
-    const navigate = useNavigate();
-    const { login } = useAuth();
+ 
     
     const API_URL = process.env.REACT_APP_API_URL + "/auth/admin-pass-login";
 
